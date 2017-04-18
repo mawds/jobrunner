@@ -15,7 +15,9 @@ myprog -size 40 -age 50
 myprog -size 40 -age 55
 ```
 
-Note that we pass the command line as a quoted string to prevent interferance by the shell. It's `myprog`'s responsibilty to do something sensible with the output files.  The ordering of the output command lines is arbitrary.
+Note that we pass the command line as a quoted string to prevent interferance by the shell. The ordering of the output command lines is arbitrary.
+
+Typically myprog will append results to a file.
 
 An additional syntax element is also supported.  If multiple files need to be loaded relating to the same experimental unit, then we can do stem expansion:
 
@@ -23,7 +25,7 @@ An additional syntax element is also supported.  If multiple files need to be lo
 jobrunner.py "myprog -auxfile {p: P01, P02}_auxfile.csv -datafile data{p:}.txt -size {20,40}"
 ```
 
-will run generate:
+will generate:
 
 ```
 myprog -auxfile P01_auxfile.csv -datafile dataP01.txt -size 20
