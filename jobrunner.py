@@ -1,5 +1,4 @@
-""" Run a program multiple times, sweeping over a range of options """
-#!/bin/python
+#!/usr/bin/python
 
 import sys
 import re
