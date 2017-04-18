@@ -12,7 +12,6 @@ def parseGroup(groupstring):
     if m:
         groupName = m.group(1)
         justgroups = m.group(2)
-
     else:
         groupName = next(groupNames)
         justgroups = groupstring 
@@ -40,7 +39,6 @@ if len(sys.argv) != 2:
 
 commandString = sys.argv[1]
 
-print commandString
 groups = dict()
 groupList = []
 
@@ -52,18 +50,20 @@ for group in groupregex.finditer(commandString):
     if groupValues is not None:
         groups[groupName] = groupValues 
     groupList.append(groupName)
-    
+
 
 # Convert dict to a list of lists so we get the option arguments in the correct order
 masterlist = []
-for g in groupList:
+masterlistnames = []
+for g in groups:
+    masterlistnames.append(g)
     masterlist.append(groups[g])
 
 for i in itertools.product(*masterlist):
     thisCommand = commandString
-    for thisSubs in i:
-        thisCommand = re.sub(pattern, thisSubs, thisCommand, count=1)
-    
+    numSubs = 0
+    while numSubs < len(groupList):
+        thisCommand = re.sub(pattern, i[masterlistnames.index(groupList[numSubs])], thisCommand, count=1)
+        numSubs = numSubs+1
     print thisCommand
-
 
