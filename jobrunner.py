@@ -37,7 +37,7 @@ if len(sys.argv) != 2:
     sys.exit()
 
 commandString = sys.argv[1]
-
+sys.stderr.write("Commandstring as passed in: " + commandString + "\n")
 groups = dict()
 groupList = []
 
