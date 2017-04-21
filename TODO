@@ -1,4 +1,5 @@
 Allow user to pass a named expansion list as an option (will use with Makefiles, where the makefile can generate, e.g. P01,P02,P03,P04)
+(done, but *only for a single named expression - this is to do with argparse)
 
 Linked groups, i.e. --trackerfile /results/{1:OpenFace,CppMT}/P01_front.{1:Openface,txt}
 
