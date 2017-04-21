@@ -31,39 +31,50 @@ def genGroupName():
 
 groupNames = genGroupName()
 
+def parseCommandString(commandString):
+    groups = dict()
+    groupList = []
+    commandLines = []
+
+    # We don't really care what the options are; we're just interested in extracting all the {}s
+    pattern = r'\{(.+?)\}'
+    groupregex = re.compile(pattern)
+    for group in groupregex.finditer(commandString):
+        (groupName, groupValues) = parseGroup(group.group(1))
+        if groupValues is not None:
+            groups[groupName] = groupValues
+        groupList.append(groupName)
+
+
+    # Convert dict to a list of lists so we get the option arguments in the correct order
+    masterlist = []
+    masterlistnames = []
+    for g in groups:
+        masterlistnames.append(g)
+        masterlist.append(groups[g])
+
+    for i in itertools.product(*masterlist):
+        thisCommand = commandString
+        numSubs = 0
+        while numSubs < len(groupList):
+            thisCommand = re.sub(pattern, \
+            i[masterlistnames.index(groupList[numSubs])], \
+            thisCommand, count=1)
+            numSubs = numSubs+1
+        commandLines.append(thisCommand)
+
+    return commandLines
+
+
+########################################
+
+
 if len(sys.argv) != 2:
     print "The command to be run, and its options must be passed as a quoted string"
     sys.exit()
 
-commandString = sys.argv[1]
-sys.stderr.write("Commandstring as passed in: " + commandString + "\n")
-groups = dict()
-groupList = []
+COMMANDSTRING = sys.argv[1]
+sys.stderr.write("Commandstring as passed in: " + COMMANDSTRING + "\n")
 
-# We don't really care what the options are; we're just interested in extracting all the {}s
-pattern = r'\{(.+?)\}'
-groupregex = re.compile(pattern)
-for group in groupregex.finditer(commandString):
-    (groupName, groupValues) = parseGroup(group.group(1))
-    if groupValues is not None:
-        groups[groupName] = groupValues
-    groupList.append(groupName)
-
-
-# Convert dict to a list of lists so we get the option arguments in the correct order
-masterlist = []
-masterlistnames = []
-for g in groups:
-    masterlistnames.append(g)
-    masterlist.append(groups[g])
-
-for i in itertools.product(*masterlist):
-    thisCommand = commandString
-    numSubs = 0
-    while numSubs < len(groupList):
-        thisCommand = re.sub(pattern, \
-        i[masterlistnames.index(groupList[numSubs])], \
-         thisCommand, count=1)
-        numSubs = numSubs+1
-    print thisCommand
-
+OUTPUTLINES = parseCommandString(COMMANDSTRING)
+print "\n".join(OUTPUTLINES)
