@@ -6,14 +6,23 @@ import itertools
 import unittest
 
 class TestExpansion(unittest.TestCase):
+    # TODO use assertSetEqual instead of assertListEqual since order doesn't matter
+
+    def test_no_expand(self):
+        self.assertListEqual(parseCommandString("a.out {1}"), \
+        ['a.out 1'])
+
+    def test_no_expand_named(self):
+        self.assertListEqual(parseCommandString("a.out {a:1}"), \
+        ['a.out 1'])
 
     def test_single_expand(self):
         self.assertListEqual(parseCommandString("a.out {1,2,3}"), \
         ['a.out 1', 'a.out 2', 'a.out 3'])
     
     def test_multi_expand(self):
-        self.assertListEqual(parseCommandString("a.out {1,2,3} {x,y}"), \
-        ['a.out 1 x', 'a.out 2 x', 'a.out 3 x', 'a.out 1 y', 'a.out 2 y', 'a.out 3 y'])
+        self.assertSetEqual(set(parseCommandString("a.out {1,2,3} {x,y}")), \
+        set(['a.out 1 x', 'a.out 2 x', 'a.out 3 x', 'a.out 1 y', 'a.out 2 y', 'a.out 3 y']))
     
     def test_named_expand(self):
         self.assertListEqual(parseCommandString("a.out {a:1,2} {a:}"),  \
@@ -30,6 +39,19 @@ class TestExpansion(unittest.TestCase):
         '--participant P02 --trackerfile /results/OpenFace/P02_frontOpenFace', \
         '--participant P01 --trackerfile /results/Cppmt/P01_frontCppmt', \
         '--participant P02 --trackerfile /results/Cppmt/P02_frontCppmt'])
+
+    def test_repeated_groups(self):
+        # Check cannot redefine a named group
+        with self.assertRaises(ValueError):
+            parseCommandString("a.out {a:1,2} {a:3,4}")
+
+    def test_extgroup(self):
+        self.assertListEqual(parseCommandString("a.out {a:}", ["a:1,2"]), ['a.out 1', 'a.out 2'])
+    
+    def test_extgroup_mixed(self):
+        self.assertListEqual(parseCommandString("a.out {a:} {x,y}", ["a:1,2"]), \
+        ['a.out 1 x', 'a.out 1 y', 'a.out 2 x', 'a.out 2 y'])
+
 
 def parseGroup(groupstring):
     """Parse an extracted group; returns a list containg each option"""
@@ -58,10 +80,18 @@ def genGroupName():
 
 groupNames = genGroupName()
 
-def parseCommandString(commandString):
+def parseCommandString(commandString, extargs=None):
     groups = dict()
     groupList = []
     commandLines = []
+
+    # Parse any externally passed groups
+    if extargs is not None:
+        for eg in extargs:
+            (groupName, groupValues) = parseGroup(eg)
+            # if groupName in groups:
+            #     raise ValueError("Cannot redefine a named group")
+            groups[groupName] = groupValues
 
     # We don't really care what the options are; we're just interested in extracting all the {}s
     pattern = r'\{(.+?)\}'
@@ -69,6 +99,8 @@ def parseCommandString(commandString):
     for group in groupregex.finditer(commandString):
         (groupName, groupValues) = parseGroup(group.group(1))
         if groupValues is not None:
+            if groupName in groups:
+                raise ValueError("Cannot redefine a named group")
             groups[groupName] = groupValues
         groupList.append(groupName)
 
