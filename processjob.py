@@ -104,7 +104,6 @@ def parseCommandString(commandString, extargs=None):
             groups[groupName] = groupValues
         groupList.append(groupName)
 
-
     # Convert dict to a list of lists so we get the option arguments in the correct order
     masterlist = []
     masterlistnames = []
