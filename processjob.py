@@ -3,6 +3,25 @@
 import sys
 import re
 import itertools
+import unittest
+
+class TestStringMethods(unittest.TestCase):
+
+    def test_single_expand(self):
+        self.assertListEqual(parseCommandString("a.out {1,2,3}"), \
+        ['a.out 1', 'a.out 2', 'a.out 3'])
+    
+    def test_multi_expand(self):
+        self.assertListEqual(parseCommandString("a.out {1,2,3} {x,y}"), \
+        ['a.out 1 x', 'a.out 2 x', 'a.out 3 x', 'a.out 1 y', 'a.out 2 y', 'a.out 3 y'])
+    
+    def test_named_expand(self):
+        self.assertListEqual(parseCommandString("a.out {a:1,2} {a:}"),  \
+        ['a.out 1 1', 'a.out 2 2'])
+
+    def test_multiple_named_expand(self):
+        self.assertListEqual(parseCommandString("a.out {a:1,2} {b:3,4} {a:} {b:}"), \
+        ['a.out 1 3 1 3', 'a.out 1 4 1 4', 'a.out 2 3 2 3', 'a.out 2 4 2 4'])
 
 def parseGroup(groupstring):
     """Parse an extracted group; returns a list containg each option"""
@@ -65,5 +84,5 @@ def parseCommandString(commandString):
 
     return commandLines
 
-
-
+if __name__ == '__main__':
+    unittest.main()
