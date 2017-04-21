@@ -5,7 +5,7 @@ import re
 import itertools
 import unittest
 
-class TestStringMethods(unittest.TestCase):
+class TestExpansion(unittest.TestCase):
 
     def test_single_expand(self):
         self.assertListEqual(parseCommandString("a.out {1,2,3}"), \
