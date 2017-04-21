@@ -23,6 +23,14 @@ class TestStringMethods(unittest.TestCase):
         self.assertListEqual(parseCommandString("a.out {a:1,2} {b:3,4} {a:} {b:}"), \
         ['a.out 1 3 1 3', 'a.out 1 4 1 4', 'a.out 2 3 2 3', 'a.out 2 4 2 4'])
 
+    def test_nested_groups(self):
+        # Logically equivalent to test_multiple_named_expand
+        self.assertListEqual(parseCommandString("--participant {p:P01,P02} --trackerfile /results/{a:OpenFace,Cppmt}/{p:}_front{a:}"), \
+        ['--participant P01 --trackerfile /results/OpenFace/P01_frontOpenFace', \
+        '--participant P02 --trackerfile /results/OpenFace/P02_frontOpenFace', \
+        '--participant P01 --trackerfile /results/Cppmt/P01_frontCppmt', \
+        '--participant P02 --trackerfile /results/Cppmt/P02_frontCppmt'])
+
 def parseGroup(groupstring):
     """Parse an extracted group; returns a list containg each option"""
     m = re.search(r"^(\w):(.*)", groupstring)

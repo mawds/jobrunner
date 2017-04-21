@@ -3,5 +3,5 @@ Allow user to pass a named expansion list as an option (will use with Makefiles,
 Linked groups, i.e. --trackerfile /results/{1:OpenFace,CppMT}/P01_front.{1:Openface,txt}
 
 Nested groups - i.e. --trackerfile /results/{a:OpenFace,Cppmt}/{p:}_front{a:}
-(this should already work)
+(this should already work - it does; see unit test)
 
