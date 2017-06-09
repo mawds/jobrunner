@@ -119,7 +119,7 @@ def parseCommandString(commandString, extargs=None):
         masterlistnames.append(g)
         masterlist.append(groups[g])
     if set(masterlistnames) != parsedGroupNames:
-       raise ValueError("External groups defined but not used")
+       raise ValueError("External groups + internal groups != groups on command line")
 
     for i in itertools.product(*masterlist):
         thisCommand = commandString
