@@ -11,7 +11,7 @@ parser.add_argument("commandline", nargs="+")
 # argparse should allow > 1 arguments with the same name
 # This is tested for below
 parser.add_argument("--extvar",  nargs="+", action="append")
-parser.add_argument("--extvarfile", nargs="+")
+parser.add_argument("--extvarfile", nargs="+", action="append")
 args = parser.parse_args()
 
 if len(args.commandline) != 1:
@@ -26,23 +26,20 @@ if bool(args.extvar is not None) & bool(args.extvarfile is not None):
     sys.exit()
 
 
-extvar = None
+extvar = [] 
 if args.extvarfile is not None:
-    if len(args.extvarfile) > 1: 
-        print "Don't currently handle > 1 extvar"
-        sys.exit()
-    m = re.search(r"^(\w):(.*)", args.extvarfile[0])
-    if m:
-        groupname = m.group(1)
-        filename = m.group(2)
-        with open(filename,"r") as f:
-            pars = f.readline().strip()
-        extvarstring =  groupname + ":" + pars
-        extvar = [[extvarstring]] # This has to be a list of lists for compatibility 
-        # with named expansions passed on the command line
-    else:
-        print "Cannot parse extvarfile"
-        sys.exit()
+    for evf in args.extvarfile:
+        m = re.search(r"^(\w):(.*)", evf[0])
+        if m:
+            groupname = m.group(1)
+            filename = m.group(2)
+            with open(filename,"r") as f:
+                pars = f.readline().strip()
+            extvarstring =  groupname + ":" + pars
+            extvar.append([extvarstring])
+        else:
+            print "Cannot parse extvarfile"
+            sys.exit()
 
 if args.extvar is not None:
     extvar = args.extvar
