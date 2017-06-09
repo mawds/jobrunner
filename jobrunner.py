@@ -43,7 +43,6 @@ if args.extvarfile is not None:
         print "Cannot parse extvarfile"
         sys.exit()
 
-print args.extvar
 if args.extvar is not None:
     extvar = args.extvar
 

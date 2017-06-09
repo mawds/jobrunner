@@ -46,16 +46,17 @@ class TestExpansion(unittest.TestCase):
             parseCommandString("a.out {a:1,2} {a:3,4}")
 
     def test_extgroup(self):
-        self.assertListEqual(parseCommandString("a.out {a:}", ["a:1,2"]), ['a.out 1', 'a.out 2'])
+        cmdline = parseCommandString("a.out {a:}", [["a:1,2"]])
+        self.assertListEqual(cmdline,['a.out 1', 'a.out 2'])
     
     def test_extgroup_mixed(self):
-        self.assertListEqual(parseCommandString("a.out {a:} {x,y}", ["a:1,2"]), \
+        cmdstring = parseCommandString("a.out {a:} {x,y}", [["a:1,2"]])
+        self.assertListEqual(cmdstring, \
         ['a.out 1 x', 'a.out 1 y', 'a.out 2 x', 'a.out 2 y'])
 
 
 def parseGroup(groupstring):
     """Parse an extracted group; returns a list containg each option"""
-    print "Parsing:" + groupstring
     m = re.search(r"^(\w):(.*)", groupstring)
     if m:
         groupName = m.group(1)
