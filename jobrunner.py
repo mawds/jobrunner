@@ -21,7 +21,7 @@ if len(args.commandline) != 1:
 COMMANDSTRING = args.commandline[0]
 sys.stderr.write("Commandstring as passed in: " + COMMANDSTRING + "\n")
 
-if not((args.extvar is None) ^ (args.extvarfile is None)):
+if bool(args.extvar is not None) & bool(args.extvarfile is not None):
     print "Can only specify external variables on command line OR in a file"
     sys.exit()
 
