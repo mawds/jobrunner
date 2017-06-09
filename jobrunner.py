@@ -38,7 +38,8 @@ if args.extvarfile is not None:
         with open(filename,"r") as f:
             pars = f.readline().strip()
         extvarstring =  groupname + ":" + pars
-        extvar = [extvarstring]
+        extvar = [[extvarstring]] # This has to be a list of lists for compatibility 
+        # with named expansions passed on the command line
     else:
         print "Cannot parse extvarfile"
         sys.exit()

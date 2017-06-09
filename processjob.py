@@ -54,7 +54,6 @@ class TestExpansion(unittest.TestCase):
         self.assertListEqual(cmdstring, \
         ['a.out 1 x', 'a.out 1 y', 'a.out 2 x', 'a.out 2 y'])
 
-
 def parseGroup(groupstring):
     """Parse an extracted group; returns a list containg each option"""
     m = re.search(r"^(\w):(.*)", groupstring)
