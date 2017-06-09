@@ -55,6 +55,7 @@ class TestExpansion(unittest.TestCase):
 
 def parseGroup(groupstring):
     """Parse an extracted group; returns a list containg each option"""
+    print "Parsing:" + groupstring
     m = re.search(r"^(\w):(.*)", groupstring)
     if m:
         groupName = m.group(1)
@@ -88,16 +89,23 @@ def parseCommandString(commandString, extargs=None):
     # Parse any externally passed groups
     if extargs is not None:
         for eg in extargs:
-            (groupName, groupValues) = parseGroup(eg)
+            if len(eg) != 1:
+                print "External groups must be in a list of length 1"
+                sys.exit()
+            (groupName, groupValues) = parseGroup(eg[0])
             # if groupName in groups:
             #     raise ValueError("Cannot redefine a named group")
             groups[groupName] = groupValues
+
+    parsedGroupNames=set() # A set to contain the group names we've parsed on the command line 
+    # (These are used to check that we've not passed unused external groups in)
 
     # We don't really care what the options are; we're just interested in extracting all the {}s
     pattern = r'\{(.+?)\}'
     groupregex = re.compile(pattern)
     for group in groupregex.finditer(commandString):
         (groupName, groupValues) = parseGroup(group.group(1))
+        parsedGroupNames.add(groupName)
         if groupValues is not None:
             if groupName in groups:
                 raise ValueError("Cannot redefine a named group")
@@ -110,6 +118,8 @@ def parseCommandString(commandString, extargs=None):
     for g in groups:
         masterlistnames.append(g)
         masterlist.append(groups[g])
+    if set(masterlistnames) != parsedGroupNames:
+       raise ValueError("External groups defined but not used")
 
     for i in itertools.product(*masterlist):
         thisCommand = commandString

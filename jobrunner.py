@@ -10,7 +10,7 @@ parser.add_argument("commandline", nargs="+")
 # TODO - can only handle one external group at presnt. Unclear why
 # argparse should allow > 1 arguments with the same name
 # This is tested for below
-parser.add_argument("--extvar",  nargs="+")
+parser.add_argument("--extvar",  nargs="+", action="append")
 parser.add_argument("--extvarfile", nargs="+")
 args = parser.parse_args()
 
@@ -43,10 +43,8 @@ if args.extvarfile is not None:
         print "Cannot parse extvarfile"
         sys.exit()
 
+print args.extvar
 if args.extvar is not None:
-    if len(args.extvar) > 1: 
-        print "Don't currently handle > 1 extvar"
-        sys.exit()
     extvar = args.extvar
 
 OUTPUTLINES = processjob.parseCommandString(COMMANDSTRING, extvar)
