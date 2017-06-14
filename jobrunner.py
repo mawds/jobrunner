@@ -7,9 +7,6 @@ import re
 
 parser = ArgumentParser()
 parser.add_argument("commandline", nargs="+")
-# TODO - can only handle one external group at presnt. Unclear why
-# argparse should allow > 1 arguments with the same name
-# This is tested for below
 parser.add_argument("--extvar",  nargs="+", action="append")
 parser.add_argument("--extvarfile", nargs="+", action="append")
 args = parser.parse_args()
