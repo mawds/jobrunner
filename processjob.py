@@ -5,6 +5,7 @@ import re
 import itertools
 import unittest
 
+
 class TestExpansion(unittest.TestCase):
     # TODO use assertSetEqual instead of assertListEqual since order doesn't matter
 
@@ -118,8 +119,19 @@ def parseCommandString(commandString, extargs=None):
     for g in groups:
         masterlistnames.append(g)
         masterlist.append(groups[g])
-    if set(masterlistnames) != parsedGroupNames:
-       raise ValueError("External groups + internal groups != groups on command line")
+    if not parsedGroupNames.issubset(set(masterlistnames)):
+        raise ValueError("Undefined groups were parsed")
+    
+    if parsedGroupNames != set(masterlistnames):
+        # Have passed spare groups on the command line
+        # These need to be deleted
+        listfilter = [x in parsedGroupNames for x in masterlistnames ]
+        sys.stderr.write("'spare' groups were passed: ")
+        sparegroups = list( itertools.compress(masterlistnames,[not i for i in listfilter]))
+        sys.stderr.write(" ".join(sparegroups) + "\n")
+
+        masterlist = list(itertools.compress(masterlist,listfilter))
+        masterlistnames = list( itertools.compress(masterlistnames,listfilter))
 
     for i in itertools.product(*masterlist):
         thisCommand = commandString
